@@ -1,5 +1,7 @@
 class TasksController < ApplicationController
   before_action :set_task, only: [:show, :update, :destroy]
+  # skip_before_action :verify_autencity_token
+  protect_from_forgery with: :null_session
 
   # GET /tasks
   # GET /tasks.json

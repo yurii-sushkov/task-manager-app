@@ -1,5 +1,7 @@
 import Vue from 'vue'
 
+const Api = require('./api')
+
 document.addEventListener("DOMContentLoaded", () => {
   var app = new Vue({
     el: '#app',
@@ -26,12 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
               }
     },
     data: {
-      tasks: [
-        { id: 1, name: 'Todo 1', description: 'This is a todo', completed: false },
-        { id: 2, name: 'Todo 2', description: 'This is a todo', completed: false },
-        { id: 3, name: 'Todo 3', description: 'This is a todo', completed: true },
-        { id: 4, name: 'Todo 4', description: 'This is a todo', completed: true }
-      ],
+      tasks: [],
       task: {},
       message: '',
       action: 'create'
@@ -48,6 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     },
     methods: {
+      listTasks: function() {
+        Api.listTasks().then(function(response){
+          app.tasks = response;
+        })
+      },
       toggleDone: function(event, id) {
         event.stopImmediatePropagation()
 
@@ -58,20 +60,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       },
       createTask: function(event) {
-        event.preventDefault()
-
-        if (!this.task.completed) {
-          this.task.completed = false
+        if(!this.task.completed){
+          this.task.completed = false;
         } else {
-          this.task.completed = true
+          this.task.completed = true;
         }
-
-        let taskId = this.nextId
-        this.task.id = taskId
-        let newTask = Object.assign({}, this.task)
-        this.tasks.push(newTask)
-        this.clear()
-        this.message = `Task ${taskId} created`
+        Api.createTask(this.task).then(function(response){
+          app.listTasks();
+          app.clear();
+          app.message = `Task ${response.id} created.`
+        })
       },
       editTask: function(event, id) {
         event.stopImmediatePropagation()
@@ -108,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
         this.action = 'create'
         this.message = ''
       }
-    }
+    },
+    beforeMount() { this.listTasks() }
   })
 })
