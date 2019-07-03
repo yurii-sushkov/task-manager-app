@@ -13,3 +13,34 @@
  *= require_tree .
  *= require_self
  */
+
+@import 'semantic-ui';
+
+.details {
+  margin-top: 2em !important;
+}
+
+.tasklist {
+  padding-top: 2em !important;
+}
+
+.task.done {
+  background: lightgreen !important;
+}
+
+.task.done label {
+  text-decoration: line-through;
+}
+
+.task.todo {
+  background: lightgoldenrodyellow !important;
+}
+
+.description {
+  color: slategrey;
+  font-style: italic;
+}
+
+#editor .segment {
+  background: lavender !important;
+}
