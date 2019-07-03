@@ -51,12 +51,17 @@ document.addEventListener("DOMContentLoaded", () => {
         })
       },
       toggleDone: function(event, id) {
-        event.stopImmediatePropagation()
-
-        let task = this.tasks.find(item => item.id == id)
-        if (task) {
-          task.completed = !task.completed
-          this.message = `Task ${id} updated`
+        event.stopImmediatePropagation();
+        let task = this.tasks.find(item => item.id == id);
+        if(task) {
+          task.completed = !task.completed;
+          this.task = task;
+          Api.updateTask(this.task).then(function(response){
+            app.listTasks();
+            app.clear();
+            let status = response.completed ? 'completed' : 'in progress';
+            app.message = `Task ${response.id} is ${status}.`;
+          })
         }
       },
       createTask: function(event) {
@@ -86,11 +91,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let task = this.tasks.find(item => item.id == id)
 
-        if (task) {
-          task.name = this.task.name
-          task.description = this.task.description
-          task.completed = this.task.completed
-        }
+        Api.updateTask(this.task).then(function(respoonse){
+          app.listTasks()
+          app.clear()
+          app.message = `Task ${response.id} updated`
+        })
       },
       deleteTask: function(event, id) {
         event.stopImmediatePropagation()
@@ -98,7 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
         let taskIndex = this.tasks.findIndex(item => item.id == id)
 
         if (taskIndex >= 0) {
-          this.$delete(this.tasks, taskIndex)
+          Api.deleteTask(id).then(function(response){
+            app.$delete(app.tasks, taskIndex)
+            app.message = `Task ${id} deleted`
+          })
         }
       },
       clear: function() {
